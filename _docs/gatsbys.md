@@ -209,3 +209,353 @@ Request failed with status code 403
 #### graphql
 - http://localhost:8000/___graphql
 - Explorer: all<tabName>SheetsData
+
+
+## mdx
+
+- [Intro to MDX in Gatsby](https://www.digitalocean.com/community/tutorials/gatsbyjs-mdx-in-gatsby)
+- [Your First Steps with Gatsby v2](https://www.digitalocean.com/community/tutorials/gatsbyjs-gatsby-first-steps)
+
+
+
+### installation
+
+```bash
+gatsby new mdxs
+cd mdxs
+yarn add gatsby-plugin-mdx @mdx-js/mdx @mdx-js/react
+yarn add gatsby-source-filesystem
+```
+
+### configuration
+- gatsby-config.js
+```js
+module.exports = {
+  //...siteMetadata, etc
+  plugins: [
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `pages`,
+        path: `${__dirname}/src/pages/`,
+      },
+    },
+    {
+      resolve: `gatsby-plugin-mdx`,
+      options: {
+        defaultLayouts: {
+          default: require.resolve(`./src/components/layout.js`),
+        },
+      },
+    },
+    // ... other plugins
+  ],
+}
+```
+
+### Basic Usage
+- /src/pages/mdx-intro/index.mdx
+
+```md
+---
+title: MDX is Magical!
+path: /mdx-intro
+date: 2019-08-25
+---
+
+# Hooray For MDX!
+
+This will be like turbo-charged Markdown!
+```
+
+### Using Components in MDX
+- /src/components/TitleBar.js
+```js
+import React from 'react';
+
+const TitleBar = ({ text, size, bkgdColor }) => (
+  <div
+    style={{
+      margin: '2rem 0',
+      padding: '2rem',
+      backgroundColor: bkgdColor || '#fff',
+    }}
+  >
+    <h2
+      style={{
+        fontSize: size || '18px',
+        margin: 0,
+      }}
+    >
+      {text}
+    </h2>
+  </div>
+);
+
+export default TitleBar;
+```
+
+- /src/pages/mdx-intro/index.mdx
+```md
+---
+title: MDX is Magical!
+path: /mdx-intro
+date: 2019-08-25
+---
+import TitleBar from "../../components/TitleBar.js";
+
+<TitleBar
+  size={"32px"}
+  bkgdColor={"#4aae9b"}
+  text={props.pageContext.frontmatter.title}
+/>
+
+This will be like turbo-charged Markdown!
+```
+
+### Assigning Layouts
+- gatsby-config.js
+```js
+module.exports = {
+  plugins: [
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `pages`,
+        path: `${__dirname}/src/pages/`,
+      },
+    },
+    // {
+    //   resolve: `gatsby-source-filesystem`,
+    //   options: {
+    //     name: `posts`,
+    //     path: `${__dirname}/src/blog/`,
+    //   },
+    // },
+    {
+      resolve: `gatsby-plugin-mdx`,
+      options: {
+        defaultLayouts: {
+          // posts: require.resolve("./src/components/blog-layout.js"),
+          default: require.resolve("./src/components/layout.js"),
+        },
+      },
+    },
+  ],
+}
+```
+
+### Importing Other MDX Files
+- /src/components/postSignature.mdx
+```md
+##### Thanks for Reading!
+
+*🐊 Al E. Gator | alligator.io | al@example.com*
+
+export default ({ children }) => (
+  <>
+    {children}
+  </>
+)
+```
+
+- /src/pages/mdx-intro/index.mdx
+```md
+---
+title: MDX is Magical!
+path: /mdx-intro
+date: 2019-08-25
+---
+import TitleBar from "../../components/TitleBar.js";
+import PostSignature from "../../components/postSignature.mdx";
+
+<TitleBar
+  size={"32px"}
+  bkgdColor={"#4aae9b"}
+  text={props.pageContext.frontmatter.title}
+/>
+
+This is like turbo-charged Markdown!
+
+<PostSignature />
+```
+
+### GraphQL Queries
+```
+query {
+  allMdx {
+    edges {
+      node {
+        frontmatter {
+          title
+          path
+          date(formatString: "MMMM DD, YYYY")
+        }
+      }
+    }
+  }
+}
+```
+
+### Providing Other Data
+```js
+export const myReviews = [
+  {
+    name: "Tim's Tacos",
+    overall: 9,
+    variety: 7,
+    price: 8,
+    taste: 9
+  },
+  {
+    name: "Noodleville",
+    overall: 7,
+    variety: 5,
+    price: 6,
+    taste: 8
+  },
+  {
+    name: "Waffle Shack",
+    overall: 6,
+    variety: 5,
+    price: 4,
+    taste: 6
+  },
+];
+```
+
+```
+query MdxExports {
+  allMdx {
+    nodes {
+      exports {
+        myReviews {
+          name
+          overall
+          variety
+          price
+          taste
+        }
+      }
+    }
+  }
+}
+```
+
+### A Practical Example
+- recharts
+```bash
+$ yarn add recharts
+```
+
+- /src/components/BarChart.js
+```js
+import React, { PureComponent } from 'react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
+
+const colorsList = ['#008f68', '#6db65b', '#4aae9b', '#dfa612'];
+
+class ExampleChart extends PureComponent {
+  render() {
+    return (
+      <div style={{ width: '100%', height: 350 }}>
+        <ResponsiveContainer>
+          <BarChart data={this.props.data}>
+            <CartesianGrid strokeDasharray="2 2" />
+            <XAxis dataKey="name" />
+            <YAxis type="number" domain={[0, 10]} />
+            <Tooltip />
+            <Legend />
+
+            {this.props.bars.map((bar, i) => (
+              <Bar
+                dataKey={bar}
+                fill={colorsList[i]}
+                key={`bar_${i}`}
+              />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    );
+  }
+}
+
+export default ExampleChart;
+```
+
+- /src/pages/mdx-intro/index.mdx
+```md
+---
+title: MDX is Magical!
+path: /mdx-intro
+date: 2019-08-25
+---
+
+import TitleBar from '../../components/TitleBar';
+import PostSignature from '../../components/postSignature.mdx';
+import BarChart from "../../components/BarChart";
+
+export const myReviews = [
+  {
+    name: "Tim's Tacos",
+    overall: 9,
+    variety: 7,
+    price: 8,
+    taste: 9
+  },
+  {
+    name: "Noodleville",
+    overall: 7,
+    variety: 5,
+    price: 6,
+    taste: 8
+  },
+  {
+    name: "Waffle Shack",
+    overall: 6,
+    variety: 5,
+    price: 4,
+    taste: 6
+  },
+];
+
+<TitleBar
+  text={props.pageContext.frontmatter.title}
+  size={'32px'}
+  bkgdColor={'#4aae9b'}
+/>
+
+
+This page is built with turbo-charged Markdown!
+
+#### My Food Reviews:
+
+<BarChart
+  data={myReviews}
+  bars={["overall", "variety", "price", "taste"]}
+/>
+
+<PostSignature />
+```
+
+
+
+
+[gatsby-source-github](https://github.com/mosch/gatsby-source-github)
+[createremotefilenode gatsby-source-filesystem](https://www.gatsbyjs.com/plugins/gatsby-source-filesystem/?=#createremotefilenode)
+[Intro to MDX in Gatsby](https://www.digitalocean.com/community/tutorials/gatsbyjs-mdx-in-gatsby)
+[MDX Getting Started](https://mdxjs.com/getting-started)
+[Composing Documents with MDX: Markdown for the Component Era](https://blog.bitsrc.io/composing-documents-with-mdx-markdown-for-the-component-era-ed9d87142703)
+
+[storybook](https://storybook.js.org/)
+[Introduction to Storybook for React](https://storybook.js.org/docs/react/get-started/introduction)
