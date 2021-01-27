@@ -1,0 +1,34 @@
+---
+title: MDX is Magical!
+path: /charts/candle
+date: 2019-08-25
+---
+import TitleBar from '../../components/TitleBar';
+import PostSignature from '../../components/postSignature.mdx';
+import CandleStick from "../../components/CandleStick";
+
+export const data = [
+    {name: 'Week 1', max: 4000, min: 1400, error: [200, 1000]},
+    {name: 'Week 2', max: 4000, min: 3400, errorNegative: [1000, 200]},
+    {name: 'Week 3', max: 3200, min: 2400, errorNegative: [1000, 200]},
+    {name: 'Week 4', max: 1000, min: 400, error: [200, 1000]},
+    {name: 'Week 5', max: 2000, min: 1100, error: [200, 1000]},
+    {name: 'Week 6', max: 3000, min: 400, error: [-200, 2000]},
+    {name: 'Week 7', max: 500, min: -1000, error: [200, 2000]},
+];
+
+<TitleBar
+  text={props.pageContext.frontmatter.title}
+  size={'32px'}
+  bkgdColor={'#4aae9b'}
+/>
+
+This page is Test of CandleStick
+
+#### CandleStick:
+
+<CandleStick 
+  data={data}
+/>
+
+<PostSignature />
