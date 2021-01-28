@@ -142,4 +142,4 @@ const CandleChart = (props) => {
     );
   };
   
-  export default CandleChart;
+export default CandleChart;

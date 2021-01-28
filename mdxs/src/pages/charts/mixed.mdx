@@ -1,0 +1,36 @@
+---
+title: MDX is Magical!
+path: /charts/mixed
+date: 2019-08-25
+---
+import TitleBar from '../../components/TitleBar';
+import PostSignature from '../../components/postSignature.mdx';
+import MixedChart from "../../components/MixedChart";
+
+export const data = [
+    { time: "00:00", temp: -5, rain: 0 },
+    { time: "03:00", temp: -2, rain: 0 },
+    { time: "06:00", temp: -1, rain: 0 },
+    { time: "09:00", temp: 0, rain: 0 },
+    { time: "12:00", temp: 2, rain: 3 },
+    { time: "15:00", temp: 4, rain: 10 },
+    { time: "18:00", temp: 5, rain: 3 },
+    { time: "21:00", temp: 3, rain: 0 },
+    { time: "00:00", temp: 0, rain: 0 },
+];
+
+<TitleBar
+  text={props.pageContext.frontmatter.title}
+  size={'32px'}
+  bkgdColor={'#4aae9b'}
+/>
+
+This page is Test of MixedChart
+
+#### MixedChart:
+
+<MixedChart 
+  data={data}
+/>
+
+<PostSignature />
